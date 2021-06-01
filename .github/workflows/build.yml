@@ -1,0 +1,42 @@
+---
+name: build latest
+
+on:
+  push:
+    branches: [master]
+  schedule:
+    - cron: "0 0 * * 0"
+
+  workflow_dispatch:
+    inputs:
+      snmp_exporter_version:
+        description: "snmp_exporter version to use"
+        required: true
+        default: "latest"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Download MIBS
+        run: |
+          make mibs
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          tags: devonm/snmp-generator:${{ github.event.inputs.from_tag || env.DEFAULT_FROM_TAG }}
+          push: true
+          build-args: SNMP_EXPORTER_VERSION=${{ github.event.inputs.snmp_exporter_version || env.DEFAULT_FROM_TAG }}
+        env:
+          DEFAULT_FROM_TAG: latest
