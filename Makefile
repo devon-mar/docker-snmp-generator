@@ -1,4 +1,4 @@
-# Modified from https://github.com/prometheus/snmp_exporter/blob/main/generator/Makefile
+# Modified from https://github.com/prometheus/snmp_exporter/blob/850835b5e5363db63678c98b89c3b7622733cedf/generator/Makefile
 
 # Copyright 2018 The Prometheus Authors
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,19 +16,21 @@
 MIBDIR   := mibs
 MIB_PATH := 'mibs'
 
-CURL_OPTS ?= -s --retry 3 --retry-delay 3 --fail
+CURL_OPTS ?= -L -s --retry 3 --retry-delay 3 --fail
 
 DOCKER_IMAGE_NAME ?= snmp-generator
 DOCKER_IMAGE_TAG  ?= $(subst /,-,$(shell git rev-parse --abbrev-ref HEAD))
 DOCKER_REPO       ?= prom
 
-APC_URL           := 'https://download.schneider-electric.com/files?p_File_Name=powernet432.mib'
+APC_URL           := 'https://download.schneider-electric.com/files?p_Doc_Ref=APC_POWERNETMIB_441_EN&p_enDocType=Firmware&p_File_Name=powernet441.mib'
 ARISTA_URL        := https://www.arista.com/assets/data/docs/MIBS
 CISCO_URL         := 'ftp://ftp.cisco.com/pub/mibs/v2/v2.tar.gz'
 IANA_CHARSET_URL  := https://www.iana.org/assignments/ianacharset-mib/ianacharset-mib
 IANA_IFTYPE_URL   := https://www.iana.org/assignments/ianaiftype-mib/ianaiftype-mib
 IANA_PRINTER_URL  := https://www.iana.org/assignments/ianaprinter-mib/ianaprinter-mib
-KEEPALIVED_URL    := https://raw.githubusercontent.com/acassen/keepalived/v2.1.5/doc/KEEPALIVED-MIB.txt
+KEEPALIVED_URL    := https://raw.githubusercontent.com/acassen/keepalived/v2.2.7/doc/KEEPALIVED-MIB.txt
+VRRP_URL          := https://raw.githubusercontent.com/acassen/keepalived/v2.2.7/doc/VRRP-MIB.txt
+VRRPV3_URL        := https://raw.githubusercontent.com/acassen/keepalived/v2.2.7/doc/VRRPv3-MIB.txt
 KEMP_LM_URL       := https://kemptechnologies.com/files/packages/current/LM_mibs.zip
 MIKROTIK_URL      := 'https://box.mikrotik.com/f/a41daf63d0c14347a088/?dl=1'
 NEC_URL           := https://jpn.nec.com/univerge/ix/Manual/MIB
@@ -44,7 +46,9 @@ UBNT_DL_URL       := https://dl.ubnt-ut.com/snmp
 WIENER_URL        := https://file.wiener-d.com/software/net-snmp/WIENER-CRATE-MIB-5704.zip
 RARITAN_URL       := https://cdn.raritan.com/download/PX/v1.5.20/PDU-MIB.txt
 INFRAPOWER_URL    := https://www.austin-hughes.com/support/software/infrapower/IPD-MIB.7z
-LIEBERT_URL       := https://www.vertiv.com/492204/contentassets/b00273585e0a453a9c983523e8a0d6ff/lgpmib-unix_rev16.tar
+LIEBERT_URL       := https://www.vertiv.com/globalassets/documents/software/monitoring/lgpmib-win_rev16_299461_0.zip
+EATON_URL         := https://powerquality.eaton.com/Support/Software-Drivers/Downloads/ePDU/EATON-EPDU-MIB.zip
+EATON_OIDS_URL    := https://raw.githubusercontent.com/librenms/librenms/master/mibs/eaton/EATON-OIDS
 FREENAS_URL       := https://raw.githubusercontent.com/truenas/middleware/master/src/freenas/usr/local/share/snmp/mibs/FREENAS-MIB.txt
 
 .DEFAULT: all
@@ -72,6 +76,8 @@ mibs: mib-dir \
   $(MIBDIR)/IANA-IFTYPE-MIB.txt \
   $(MIBDIR)/IANA-PRINTER-MIB.txt \
   $(MIBDIR)/KEEPALIVED-MIB \
+  $(MIBDIR)/VRRP-MIB \
+  $(MIBDIR)/VRRPv3-MIB \
   $(MIBDIR)/.kemp-lm \
   $(MIBDIR)/MIKROTIK-MIB \
   $(MIBDIR)/.net-snmp \
@@ -90,6 +96,9 @@ mibs: mib-dir \
   $(MIBDIR)/PDU-MIB.txt \
   $(MIBDIR)/IPD-MIB_Q419V9.mib \
   $(MIBDIR)/LIEBERT_GP_PDU.MIB \
+  $(MIBDIR)/EATON-EPDU-MIB.txt \
+  $(MIBDIR)/EATON-SENSOR-MIB.txt \
+  $(MIBDIR)/EATON-OIDS.txt \
   $(MIBDIR)/FREENAS-MIB.txt
 
 mib-dir:
@@ -136,6 +145,14 @@ $(MIBDIR)/KEEPALIVED-MIB:
 	@echo ">> Downloading KEEPALIVED-MIB"
 	@curl $(CURL_OPTS) -o $(MIBDIR)/KEEPALIVED-MIB $(KEEPALIVED_URL)
 
+$(MIBDIR)/VRRP-MIB:
+	@echo ">> Downloading VRRP-MIB"
+	@curl $(CURL_OPTS) -o $(MIBDIR)/VRRP-MIB $(VRRP_URL)
+
+$(MIBDIR)/VRRPv3-MIB:
+	@echo ">> Downloading VRRPv3-MIB"
+	@curl $(CURL_OPTS) -o $(MIBDIR)/VRRPv3-MIB $(VRRPV3_URL)
+
 $(MIBDIR)/.kemp-lm:
 	$(eval TMP := $(shell mktemp))
 	@echo ">> Downloading Kemp LM MIBs to $(TMP)"
@@ -165,8 +182,6 @@ $(MIBDIR)/.net-snmp:
 	@curl $(CURL_OPTS) -o $(MIBDIR)/SNMPv2-SMI $(NET_SNMP_URL)/SNMPv2-SMI.txt
 	@curl $(CURL_OPTS) -o $(MIBDIR)/SNMPv2-TC $(NET_SNMP_URL)/SNMPv2-TC.txt
 	@curl $(CURL_OPTS) -o $(MIBDIR)/UCD-SNMP-MIB $(NET_SNMP_URL)/UCD-SNMP-MIB.txt
-	@curl $(CURL_OPTS) -o $(MIBDIR)/UCD-DISKIO-MIB $(NET_SNMP_URL)/UCD-DISKIO-MIB.txt
-	@curl $(CURL_OPTS) -o $(MIBDIR)/LM-SENSORS-MIB $(NET_SNMP_URL)/LM-SENSORS-MIB.txt
 	@touch $(MIBDIR)/.net-snmp
 
 $(MIBDIR)/PICO-IPSEC-FLOW-MONITOR-MIB.txt:
@@ -246,8 +261,19 @@ $(MIBDIR)/LIEBERT_GP_PDU.MIB:
 	$(eval TMP := $(shell mktemp))
 	@echo ">> Downloading LIEBERT_GP_PDU.MIB to $(TMP)"
 	@curl $(CURL_OPTS) -o $(TMP) $(LIEBERT_URL)
-	@tar --no-same-owner -C $(MIBDIR) -xvf $(TMP)
+	@unzip -j -d $(MIBDIR) $(TMP) LIEBERT_GP_PDU.MIB LIEBERT_GP_REG.MIB
 	@rm -v $(TMP)
+
+$(MIBDIR)/EATON-EPDU-MIB.txt $(MIBDIR)/EATON-SENSOR-MIB.txt:
+	$(eval TMP := $(shell mktemp))
+	@echo ">> Downloading EATON-EPDU-MIB.txt to $(TMP)"
+	@curl $(CURL_OPTS) -o $(TMP) $(EATON_URL)
+	@unzip -j -d $(MIBDIR) $(TMP) EATON-EPDU-MIB.txt EATON-SENSOR-MIB.txt
+	@rm -v $(TMP)
+
+$(MIBDIR)/EATON-OIDS.txt:
+	@echo ">> Downloading EATON-OIDS.txt to $@"
+	@curl $(CURL_OPTS) -o $@ $(EATON_OIDS_URL)
 
 $(MIBDIR)/FREENAS-MIB.txt:
 	@echo ">> Downloading FREENAS-MIB"

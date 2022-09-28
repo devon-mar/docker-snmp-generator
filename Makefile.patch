@@ -1,0 +1,83 @@
+diff --git a/generator/Makefile b/Makefile
+old mode 100644
+new mode 100755
+index 85289ac..35df828
+--- a/generator/Makefile
++++ b/Makefile
+@@ -1,3 +1,5 @@
++# Modified from https://github.com/prometheus/snmp_exporter/blob/850835b5e5363db63678c98b89c3b7622733cedf/generator/Makefile
++
+ # Copyright 2018 The Prometheus Authors
+ # Licensed under the Apache License, Version 2.0 (the "License");
+ # you may not use this file except in compliance with the License.
+@@ -47,6 +49,7 @@ INFRAPOWER_URL    := https://www.austin-hughes.com/support/software/infrapower/I
+ LIEBERT_URL       := https://www.vertiv.com/globalassets/documents/software/monitoring/lgpmib-win_rev16_299461_0.zip
+ EATON_URL         := https://powerquality.eaton.com/Support/Software-Drivers/Downloads/ePDU/EATON-EPDU-MIB.zip
+ EATON_OIDS_URL    := https://raw.githubusercontent.com/librenms/librenms/master/mibs/eaton/EATON-OIDS
++FREENAS_URL       := https://raw.githubusercontent.com/truenas/middleware/master/src/freenas/usr/local/share/snmp/mibs/FREENAS-MIB.txt
+ 
+ .DEFAULT: all
+ 
+@@ -62,31 +65,6 @@ clean:
+ 		$(MIBDIR)/.synology \
+ 		$(MIBDIR)/.kemp-lm
+ 
+-generator: *.go
+-	go build
+-
+-generate: generator mibs
+-	MIBDIRS=$(MIB_PATH) ./generator --fail-on-parse-errors generate
+-
+-parse_errors: generator mibs
+-	MIBDIRS=$(MIB_PATH) ./generator --fail-on-parse-errors parse_errors
+-
+-.PHONY: docker
+-docker:
+-	docker build -t "$(DOCKER_REPO)/$(DOCKER_IMAGE_NAME):$(DOCKER_IMAGE_TAG)" .
+-
+-.PHONY: docker-generate
+-docker-generate: docker mibs
+-	docker run -ti -v "${PWD}:/opt/" "$(DOCKER_REPO)/$(DOCKER_IMAGE_NAME):$(DOCKER_IMAGE_TAG)" generate
+-
+-.PHONY: docker-publish
+-docker-publish:
+-	docker push "$(DOCKER_REPO)/$(DOCKER_IMAGE_NAME)"
+-
+-.PHONY: docker-tag-latest
+-docker-tag-latest:
+-	docker tag "$(DOCKER_REPO)/$(DOCKER_IMAGE_NAME):$(DOCKER_IMAGE_TAG)" "$(DOCKER_REPO)/$(DOCKER_IMAGE_NAME):latest"
+-
+ .PHONY: mibs
+ mibs: mib-dir \
+   $(MIBDIR)/apc-powernet-mib \
+@@ -120,7 +98,8 @@ mibs: mib-dir \
+   $(MIBDIR)/LIEBERT_GP_PDU.MIB \
+   $(MIBDIR)/EATON-EPDU-MIB.txt \
+   $(MIBDIR)/EATON-SENSOR-MIB.txt \
+-  $(MIBDIR)/EATON-OIDS.txt
++  $(MIBDIR)/EATON-OIDS.txt \
++  $(MIBDIR)/FREENAS-MIB.txt
+ 
+ mib-dir:
+ 	@mkdir -p -v $(MIBDIR)
+@@ -147,13 +126,6 @@ $(MIBDIR)/.cisco_v2:
+ 	@mkdir -p $(MIBDIR)/cisco_v2
+ 	@curl $(CURL_OPTS) -o $(TMP) $(CISCO_URL)
+ 	tar --no-same-owner -C $(MIBDIR)/cisco_v2 --strip-components=3 -zxvf $(TMP)
+-	cp mibs/cisco_v2/AIRESPACE-REF-MIB.my mibs/AIRESPACE-REF-MIB
+-	cp mibs/cisco_v2/AIRESPACE-WIRELESS-MIB.my mibs/AIRESPACE-WIRELESS-MIB
+-	cp mibs/cisco_v2/ENTITY-MIB.my mibs/ENTITY-MIB
+-	cp mibs/cisco_v2/ENTITY-SENSOR-MIB.my mibs/ENTITY-SENSOR-MIB
+-	cp mibs/cisco_v2/ENTITY-STATE-MIB.my mibs/ENTITY-STATE-MIB
+-	cp mibs/cisco_v2/ENTITY-STATE-TC-MIB.my mibs/ENTITY-STATE-TC-MIB
+-	cp mibs/cisco_v2/ISDN-MIB.my mibs/ISDN-MIB
+ 	@rm -v $(TMP)
+ 	@touch $(MIBDIR)/.cisco_v2
+ 
+@@ -303,3 +275,6 @@ $(MIBDIR)/EATON-OIDS.txt:
+ 	@echo ">> Downloading EATON-OIDS.txt to $@"
+ 	@curl $(CURL_OPTS) -o $@ $(EATON_OIDS_URL)
+ 
++$(MIBDIR)/FREENAS-MIB.txt:
++	@echo ">> Downloading FREENAS-MIB"
++	@curl $(CURL_OPTS) -o $(MIBDIR)/FREENAS-MIB.txt "$(FREENAS_URL)"
