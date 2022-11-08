@@ -24,7 +24,7 @@ DOCKER_REPO       ?= prom
 
 APC_URL           := 'https://download.schneider-electric.com/files?p_Doc_Ref=APC_POWERNETMIB_441_EN&p_enDocType=Firmware&p_File_Name=powernet441.mib'
 ARISTA_URL        := https://www.arista.com/assets/data/docs/MIBS
-CISCO_URL         := 'ftp://ftp.cisco.com/pub/mibs/v2/v2.tar.gz'
+CISCO_URL         := https://github.com/cisco/cisco-mibs.git
 IANA_CHARSET_URL  := https://www.iana.org/assignments/ianacharset-mib/ianacharset-mib
 IANA_IFTYPE_URL   := https://www.iana.org/assignments/ianaiftype-mib/ianaiftype-mib
 IANA_PRINTER_URL  := https://www.iana.org/assignments/ianaprinter-mib/ianaprinter-mib
@@ -121,12 +121,12 @@ $(MIBDIR)/ARISTA-SW-IP-FORWARDING-MIB:
 	@curl $(CURL_OPTS) -o $(MIBDIR)/ARISTA-SW-IP-FORWARDING-MIB "$(ARISTA_URL)/ARISTA-SW-IP-FORWARDING-MIB.txt"
 
 $(MIBDIR)/.cisco_v2:
-	$(eval TMP := $(shell mktemp))
+	$(eval TMP := $(shell mktemp -u))
 	@echo ">> Downloading cisco_v2"
 	@mkdir -p $(MIBDIR)/cisco_v2
-	@curl $(CURL_OPTS) -o $(TMP) $(CISCO_URL)
-	tar --no-same-owner -C $(MIBDIR)/cisco_v2 --strip-components=3 -zxvf $(TMP)
-	@rm -v $(TMP)
+	@git clone --depth=1 $(CISCO_URL) $(TMP)
+	@mv $(TMP)/v2 $(MIBDIR)/cisco_v2
+	@rm -rf $(TMP)
 	@touch $(MIBDIR)/.cisco_v2
 
 $(MIBDIR)/IANA-CHARSET-MIB.txt:
