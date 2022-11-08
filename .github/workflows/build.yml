@@ -14,6 +14,9 @@ on:
         required: true
         default: "latest"
 
+env:
+  TEST_TAG: generatortest
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -25,17 +28,49 @@ jobs:
         run: |
           make mibs
 
+      - name: Build and export to Docker
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          load: true
+          tags: ${{ env.TEST_TAG }}
+
+      - name: Test
+        run: |
+          docker run -v "${{ github.workspace }}/test/":/opt/generator/ ${{ env.TEST_TAG }} generate
+
       - name: Login to DockerHub
+        if: ${{ github.ref == 'refs/heads/master' }}
         uses: docker/login-action@v1
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build and push
+      - name: Build and push (Docker Hub)
+        if: ${{ github.ref == 'refs/heads/master' }}
         uses: docker/build-push-action@v2
         with:
           context: .
           tags: devonm/snmp-generator:${{ github.event.inputs.from_tag || env.DEFAULT_FROM_TAG }}
+          push: true
+          build-args: SNMP_EXPORTER_VERSION=${{ github.event.inputs.snmp_exporter_version || env.DEFAULT_FROM_TAG }}
+        env:
+          DEFAULT_FROM_TAG: latest
+
+      - name: Login to GitHub Container Registry
+        if: ${{ github.ref == 'refs/heads/master' }}
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push (GHCR)
+        if: ${{ github.ref == 'refs/heads/master' }}
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          tags: ghcr.io/devon-mar/snmp-generator:${{ github.event.inputs.from_tag || env.DEFAULT_FROM_TAG }}
           push: true
           build-args: SNMP_EXPORTER_VERSION=${{ github.event.inputs.snmp_exporter_version || env.DEFAULT_FROM_TAG }}
         env:

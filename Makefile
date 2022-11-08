@@ -24,7 +24,7 @@ DOCKER_REPO       ?= prom
 
 APC_URL           := 'https://download.schneider-electric.com/files?p_Doc_Ref=APC_POWERNETMIB_441_EN&p_enDocType=Firmware&p_File_Name=powernet441.mib'
 ARISTA_URL        := https://www.arista.com/assets/data/docs/MIBS
-CISCO_URL         := https://github.com/cisco/cisco-mibs.git
+CISCO_URL         := https://github.com/cisco/cisco-mibs/archive/master.tar.gz
 IANA_CHARSET_URL  := https://www.iana.org/assignments/ianacharset-mib/ianacharset-mib
 IANA_IFTYPE_URL   := https://www.iana.org/assignments/ianaiftype-mib/ianaiftype-mib
 IANA_PRINTER_URL  := https://www.iana.org/assignments/ianaprinter-mib/ianaprinter-mib
@@ -59,7 +59,7 @@ all: mibs
 clean:
 	rm -rvf \
 		$(MIBDIR)/* \
-		$(MIBDIR)/.cisco_v2 \
+		$(MIBDIR)/cisco_v2 \
 		$(MIBDIR)/.net-snmp \
 		$(MIBDIR)/.paloalto_panos \
 		$(MIBDIR)/.synology \
@@ -71,7 +71,7 @@ mibs: mib-dir \
   $(MIBDIR)/ARISTA-ENTITY-SENSOR-MIB \
   $(MIBDIR)/ARISTA-SMI-MIB \
   $(MIBDIR)/ARISTA-SW-IP-FORWARDING-MIB \
-  $(MIBDIR)/.cisco_v2 \
+  $(MIBDIR)/cisco_v2 \
   $(MIBDIR)/IANA-CHARSET-MIB.txt \
   $(MIBDIR)/IANA-IFTYPE-MIB.txt \
   $(MIBDIR)/IANA-PRINTER-MIB.txt \
@@ -120,14 +120,15 @@ $(MIBDIR)/ARISTA-SW-IP-FORWARDING-MIB:
 	@echo ">> Downloading ARISTA-SW-IP-FORWARDING-MIB"
 	@curl $(CURL_OPTS) -o $(MIBDIR)/ARISTA-SW-IP-FORWARDING-MIB "$(ARISTA_URL)/ARISTA-SW-IP-FORWARDING-MIB.txt"
 
-$(MIBDIR)/.cisco_v2:
-	$(eval TMP := $(shell mktemp -u))
+$(MIBDIR)/cisco_v2:
+	$(eval TMP := $(shell mktemp))
 	@echo ">> Downloading cisco_v2"
-	@mkdir -p $(MIBDIR)/cisco_v2
-	@git clone --depth=1 $(CISCO_URL) $(TMP)
-	@mv $(TMP)/v2 $(MIBDIR)/cisco_v2
-	@rm -rf $(TMP)
-	@touch $(MIBDIR)/.cisco_v2
+	@mkdir -p $(TMP).extract
+	@curl $(CURL_OPTS) -o $(TMP) $(CISCO_URL)
+	tar --no-same-owner -C $(TMP).extract --strip-components=1 -zxvf $(TMP)
+	@mv $(TMP).extract/v2 $(MIBDIR)/cisco_v2
+	@rm -rf $(TMP).extract
+	@rm -v $(TMP)
 
 $(MIBDIR)/IANA-CHARSET-MIB.txt:
 	@echo ">> Downloading IANA charset MIB"
