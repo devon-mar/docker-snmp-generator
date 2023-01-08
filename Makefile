@@ -96,7 +96,6 @@ mibs: mib-dir \
   $(MIBDIR)/PDU-MIB.txt \
   $(MIBDIR)/IPD-MIB_Q419V9.mib \
   $(MIBDIR)/LIEBERT_GP_PDU.MIB \
-  $(MIBDIR)/EATON-SENSOR-MIB.txt \
   $(MIBDIR)/EATON-OIDS.txt \
   $(MIBDIR)/FREENAS-MIB.txt
 
