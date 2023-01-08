@@ -49,7 +49,7 @@ INFRAPOWER_URL    := https://www.austin-hughes.com/support/software/infrapower/I
 LIEBERT_URL       := https://www.vertiv.com/globalassets/documents/software/monitoring/lgpmib-win_rev16_299461_0.zip
 EATON_URL         := https://powerquality.eaton.com/Support/Software-Drivers/Downloads/ePDU/EATON-EPDU-MIB.zip
 EATON_OIDS_URL    := https://raw.githubusercontent.com/librenms/librenms/master/mibs/eaton/EATON-OIDS
-FREENAS_URL       := https://raw.githubusercontent.com/truenas/middleware/master/src/freenas/usr/local/share/snmp/mibs/FREENAS-MIB.txt
+FREENAS_URL       := https://raw.githubusercontent.com/truenas/middleware/master/src/freenas/usr/local/share/snmp/mibs/TRUENAS-MIB.txt
 
 .DEFAULT: all
 
