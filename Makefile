@@ -24,7 +24,9 @@ DOCKER_REPO       ?= prom
 
 APC_URL           := 'https://download.schneider-electric.com/files?p_Doc_Ref=APC_POWERNETMIB_441_EN&p_enDocType=Firmware&p_File_Name=powernet441.mib'
 ARISTA_URL        := https://www.arista.com/assets/data/docs/MIBS
-CISCO_URL         := https://github.com/cisco/cisco-mibs/archive/master.tar.gz
+# Commit 7c5d2d486bd62b5b9bffcb6fcd0d32b3bd9549e1 breaks AIRESPACE-WIRELESS-MIB
+# err="cannot find oid '1.3.6.1.4.1.14179.2.1.1.1.38' to walk"
+CISCO_URL         := https://github.com/cisco/cisco-mibs/archive/2d465cce2de4e67a3561d8e41e4c99b597558d4b.tar.gz
 IANA_CHARSET_URL  := https://www.iana.org/assignments/ianacharset-mib/ianacharset-mib
 IANA_IFTYPE_URL   := https://www.iana.org/assignments/ianaiftype-mib/ianaiftype-mib
 IANA_PRINTER_URL  := https://www.iana.org/assignments/ianaprinter-mib/ianaprinter-mib
