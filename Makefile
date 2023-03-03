@@ -22,7 +22,7 @@ DOCKER_IMAGE_NAME ?= snmp-generator
 DOCKER_IMAGE_TAG  ?= $(subst /,-,$(shell git rev-parse --abbrev-ref HEAD))
 DOCKER_REPO       ?= prom
 
-APC_URL           := 'https://download.schneider-electric.com/files?p_Doc_Ref=APC_POWERNETMIB_441_EN&p_enDocType=Firmware&p_File_Name=powernet441.mib'
+APC_URL           := https://download.schneider-electric.com/files?p_enDocType=Firmware&p_File_Name=powernet446.mib&p_Doc_Ref=APC_POWERNETMIB_446_EN
 ARISTA_URL        := https://www.arista.com/assets/data/docs/MIBS
 # Commit 7c5d2d486bd62b5b9bffcb6fcd0d32b3bd9549e1 breaks AIRESPACE-WIRELESS-MIB
 # err="cannot find oid '1.3.6.1.4.1.14179.2.1.1.1.38' to walk"
