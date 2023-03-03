@@ -16,7 +16,7 @@
 MIBDIR   := mibs
 MIB_PATH := 'mibs'
 
-CURL_OPTS ?= -L -s --retry 3 --retry-delay 3 --fail
+CURL_OPTS ?= -L --no-progress-meter --retry 3 --retry-delay 3 --fail
 
 DOCKER_IMAGE_NAME ?= snmp-generator
 DOCKER_IMAGE_TAG  ?= $(subst /,-,$(shell git rev-parse --abbrev-ref HEAD))
@@ -67,8 +67,7 @@ clean:
 		$(MIBDIR)/.synology \
 		$(MIBDIR)/.kemp-lm
 
-.PHONY: mibs
-mibs: mib-dir \
+mibs: \
   $(MIBDIR)/apc-powernet-mib \
   $(MIBDIR)/ARISTA-ENTITY-SENSOR-MIB \
   $(MIBDIR)/ARISTA-SMI-MIB \
@@ -106,7 +105,7 @@ mib-dir:
 
 $(MIBDIR)/apc-powernet-mib:
 	@echo ">> Downloading apc-powernet-mib"
-	@curl $(CURL_OPTS) -o $(MIBDIR)/apc-powernet-mib $(APC_URL)
+	@curl $(CURL_OPTS) -o $(MIBDIR)/apc-powernet-mib "$(APC_URL)"
 
 $(MIBDIR)/ARISTA-ENTITY-SENSOR-MIB:
 	@echo ">> Downloading ARISTA-ENTITY-SENSOR-MIB"
