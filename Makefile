@@ -66,6 +66,7 @@ clean:
 		$(MIBDIR)/.paloalto_panos \
 		$(MIBDIR)/.synology \
 		$(MIBDIR)/.kemp-lm
+
 .PHONY mibs
 mibs: mib-dir \
   $(MIBDIR)/apc-powernet-mib \
