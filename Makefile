@@ -66,8 +66,8 @@ clean:
 		$(MIBDIR)/.paloalto_panos \
 		$(MIBDIR)/.synology \
 		$(MIBDIR)/.kemp-lm
-
-mibs: \
+.PHONY mibs
+mibs: mib-dir \
   $(MIBDIR)/apc-powernet-mib \
   $(MIBDIR)/ARISTA-ENTITY-SENSOR-MIB \
   $(MIBDIR)/ARISTA-SMI-MIB \
