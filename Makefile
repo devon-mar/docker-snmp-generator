@@ -67,7 +67,7 @@ clean:
 		$(MIBDIR)/.synology \
 		$(MIBDIR)/.kemp-lm
 
-.PHONY mibs
+.PHONY: mibs
 mibs: mib-dir \
   $(MIBDIR)/apc-powernet-mib \
   $(MIBDIR)/ARISTA-ENTITY-SENSOR-MIB \
