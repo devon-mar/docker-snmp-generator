@@ -16,13 +16,13 @@
 MIBDIR   := mibs
 MIB_PATH := 'mibs'
 
-CURL_OPTS ?= -L -s --retry 3 --retry-delay 3 --fail
+CURL_OPTS ?= -L --no-progress-meter --retry 3 --retry-delay 3 --fail
 
 DOCKER_IMAGE_NAME ?= snmp-generator
 DOCKER_IMAGE_TAG  ?= $(subst /,-,$(shell git rev-parse --abbrev-ref HEAD))
 DOCKER_REPO       ?= prom
 
-APC_URL           := 'https://download.schneider-electric.com/files?p_Doc_Ref=APC_POWERNETMIB_441_EN&p_enDocType=Firmware&p_File_Name=powernet441.mib'
+APC_URL           := https://download.schneider-electric.com/files?p_enDocType=Firmware&p_File_Name=powernet446.mib&p_Doc_Ref=APC_POWERNETMIB_446_EN
 ARISTA_URL        := https://www.arista.com/assets/data/docs/MIBS
 # Commit 7c5d2d486bd62b5b9bffcb6fcd0d32b3bd9549e1 breaks AIRESPACE-WIRELESS-MIB
 # err="cannot find oid '1.3.6.1.4.1.14179.2.1.1.1.38' to walk"
@@ -106,7 +106,7 @@ mib-dir:
 
 $(MIBDIR)/apc-powernet-mib:
 	@echo ">> Downloading apc-powernet-mib"
-	@curl $(CURL_OPTS) -o $(MIBDIR)/apc-powernet-mib $(APC_URL)
+	@curl $(CURL_OPTS) -o $(MIBDIR)/apc-powernet-mib "$(APC_URL)"
 
 $(MIBDIR)/ARISTA-ENTITY-SENSOR-MIB:
 	@echo ">> Downloading ARISTA-ENTITY-SENSOR-MIB"
