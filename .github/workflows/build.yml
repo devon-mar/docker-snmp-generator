@@ -30,7 +30,7 @@ jobs:
           make mibs
 
       - name: Build and export to Docker
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v5
         with:
           context: .
           load: true
@@ -49,7 +49,7 @@ jobs:
 
       - name: Build and push (Docker Hub)
         if: ${{ github.ref == 'refs/heads/master' }}
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v5
         with:
           context: .
           tags: devonm/snmp-generator:${{ github.event.inputs.from_tag || env.DEFAULT_FROM_TAG }}
@@ -68,7 +68,7 @@ jobs:
 
       - name: Build and push (GHCR)
         if: ${{ github.ref == 'refs/heads/master' }}
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v5
         with:
           context: .
           tags: ghcr.io/devon-mar/snmp-generator:${{ github.event.inputs.from_tag || env.DEFAULT_FROM_TAG }}
