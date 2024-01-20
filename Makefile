@@ -48,7 +48,6 @@ UBNT_DL_URL       := https://dl.ubnt-ut.com/snmp
 WIENER_URL        := https://file.wiener-d.com/software/net-snmp/WIENER-CRATE-MIB-5704.zip
 RARITAN_URL       := https://cdn.raritan.com/download/PX/v1.5.20/PDU-MIB.txt
 INFRAPOWER_URL    := https://www.austin-hughes.com/support/software/infrapower/IPD-MIB.7z
-LIEBERT_URL       := https://www.vertiv.com/globalassets/documents/software/monitoring/lgpmib-win_rev16_299461_0.zip
 EATON_URL         := https://powerquality.eaton.com/Support/Software-Drivers/Downloads/ePDU/EATON-EPDU-MIB.zip
 EATON_OIDS_URL    := https://raw.githubusercontent.com/librenms/librenms/master/mibs/eaton/EATON-OIDS
 FREENAS_URL       := https://raw.githubusercontent.com/truenas/middleware/master/src/freenas/usr/local/share/snmp/mibs/TRUENAS-MIB.txt
@@ -97,7 +96,6 @@ mibs: mib-dir \
   $(MIBDIR)/WIENER-CRATE-MIB-5704.txt \
   $(MIBDIR)/PDU-MIB.txt \
   $(MIBDIR)/IPD-MIB_Q419V9.mib \
-  $(MIBDIR)/LIEBERT_GP_PDU.MIB \
   $(MIBDIR)/EATON-OIDS.txt \
   $(MIBDIR)/FREENAS-MIB.txt
 
@@ -257,13 +255,6 @@ $(MIBDIR)/IPD-MIB_Q419V9.mib:
 	@echo ">> Downloading IPD-MIB_Q419V9 to $(TMP)"
 	@curl $(CURL_OPTS) -L -o $(TMP) $(INFRAPOWER_URL)
 	@7z e -o$(MIBDIR) $(TMP)
-	@rm -v $(TMP)
-
-$(MIBDIR)/LIEBERT_GP_PDU.MIB:
-	$(eval TMP := $(shell mktemp))
-	@echo ">> Downloading LIEBERT_GP_PDU.MIB to $(TMP)"
-	@curl $(CURL_OPTS) -o $(TMP) $(LIEBERT_URL)
-	@unzip -j -d $(MIBDIR) $(TMP) LIEBERT_GP_PDU.MIB LIEBERT_GP_REG.MIB
 	@rm -v $(TMP)
 
 $(MIBDIR)/EATON-OIDS.txt:
