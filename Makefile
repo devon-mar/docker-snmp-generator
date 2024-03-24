@@ -35,7 +35,6 @@ VRRP_URL          := https://raw.githubusercontent.com/acassen/keepalived/v2.2.7
 VRRPV3_URL        := https://raw.githubusercontent.com/acassen/keepalived/v2.2.7/doc/VRRPv3-MIB.txt
 KEMP_LM_URL       := https://kemptechnologies.com/files/packages/current/LM_mibs.zip
 MIKROTIK_URL      := 'https://box.mikrotik.com/f/a41daf63d0c14347a088/?dl=1'
-NEC_URL           := https://jpn.nec.com/univerge/ix/Manual/MIB
 NET_SNMP_URL      := https://raw.githubusercontent.com/net-snmp/net-snmp/v5.9/mibs
 PALOALTO_URL      := https://docs.paloaltonetworks.com/content/dam/techdocs/en_US/zip/snmp-mib/pan-10-0-snmp-mib-modules.zip
 PRINTER_URL       := https://ftp.pwg.org/pub/pwg/pmp/mibs/rfc3805b.mib
@@ -83,9 +82,6 @@ mibs: mib-dir \
   $(MIBDIR)/MIKROTIK-MIB \
   $(MIBDIR)/.net-snmp \
   $(MIBDIR)/.paloalto_panos \
-  $(MIBDIR)/PICO-IPSEC-FLOW-MONITOR-MIB.txt \
-  $(MIBDIR)/PICO-SMI-ID-MIB.txt \
-  $(MIBDIR)/PICO-SMI-MIB.txt \
   $(MIBDIR)/PRINTER-MIB-V2.txt \
   $(MIBDIR)/servertech-sentry3-mib \
   $(MIBDIR)/servertech-sentry4-mib \
@@ -183,18 +179,6 @@ $(MIBDIR)/.net-snmp:
 	@curl $(CURL_OPTS) -o $(MIBDIR)/UCD-SNMP-MIB $(NET_SNMP_URL)/UCD-SNMP-MIB.txt
 	@curl $(CURL_OPTS) -o $(MIBDIR)/UCD-DISKIO-MIB $(NET_SNMP_URL)/UCD-DISKIO-MIB.txt
 	@touch $(MIBDIR)/.net-snmp
-
-$(MIBDIR)/PICO-IPSEC-FLOW-MONITOR-MIB.txt:
-	@echo ">> Downloading PICO-IPSEC-FLOW-MONITOR-MIB.txt"
-	@curl $(CURL_OPTS) -o $(MIBDIR)/PICO-IPSEC-FLOW-MONITOR-MIB.txt "$(NEC_URL)/PICO-IPSEC-FLOW-MONITOR-MIB.txt"
-
-$(MIBDIR)/PICO-SMI-MIB.txt:
-	@echo ">> Downloading PICO-SMI-MIB.txt"
-	@curl $(CURL_OPTS) -o $(MIBDIR)/PICO-SMI-MIB.txt "$(NEC_URL)/PICO-SMI-MIB.txt"
-
-$(MIBDIR)/PICO-SMI-ID-MIB.txt:
-	@echo ">> Downloading PICO-SMI-ID-MIB.txt"
-	@curl $(CURL_OPTS) -o $(MIBDIR)/PICO-SMI-ID-MIB.txt "$(NEC_URL)/PICO-SMI-ID-MIB.txt"
 
 $(MIBDIR)/.paloalto_panos:
 	$(eval TMP := $(shell mktemp))
