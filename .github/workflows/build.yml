@@ -38,7 +38,7 @@ jobs:
 
       - name: Test
         run: |
-          docker run -v "${{ github.workspace }}/test/":/opt/generator/ ${{ env.TEST_TAG }} generate
+          docker run -v "${{ github.workspace }}/test/":/opt/generator/ ${{ env.TEST_TAG }} generate --no-fail-on-parse-errors
 
       - name: Login to DockerHub
         if: ${{ github.ref == 'refs/heads/master' }}

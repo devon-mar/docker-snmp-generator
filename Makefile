@@ -23,33 +23,15 @@ DOCKER_IMAGE_TAG  ?= $(subst /,-,$(shell git rev-parse --abbrev-ref HEAD))
 DOCKER_REPO       ?= prom
 
 APC_URL           := https://download.schneider-electric.com/files?p_enDocType=Firmware&p_File_Name=powernet451.mib&p_Doc_Ref=APC_POWERNETMIB_451_EN
-ARISTA_URL        := https://www.arista.com/assets/data/docs/MIBS
-# Commit 7c5d2d486bd62b5b9bffcb6fcd0d32b3bd9549e1 breaks AIRESPACE-WIRELESS-MIB
-# err="cannot find oid '1.3.6.1.4.1.14179.2.1.1.1.38' to walk"
-CISCO_URL         := https://github.com/cisco/cisco-mibs/archive/2d465cce2de4e67a3561d8e41e4c99b597558d4b.tar.gz
+CISCO_URL         := https://github.com/cisco/cisco-mibs/archive/refs/heads/main.tar.gz
 IANA_CHARSET_URL  := https://www.iana.org/assignments/ianacharset-mib/ianacharset-mib
 IANA_IFTYPE_URL   := https://www.iana.org/assignments/ianaiftype-mib/ianaiftype-mib
 IANA_PRINTER_URL  := https://www.iana.org/assignments/ianaprinter-mib/ianaprinter-mib
 KEEPALIVED_URL    := https://raw.githubusercontent.com/acassen/keepalived/v2.2.7/doc/KEEPALIVED-MIB.txt
 VRRP_URL          := https://raw.githubusercontent.com/acassen/keepalived/v2.2.7/doc/VRRP-MIB.txt
 VRRPV3_URL        := https://raw.githubusercontent.com/acassen/keepalived/v2.2.7/doc/VRRPv3-MIB.txt
-KEMP_LM_URL       := https://kemptechnologies.com/files/packages/current/LM_mibs.zip
 MIKROTIK_URL      := 'https://box.mikrotik.com/f/a41daf63d0c14347a088/?dl=1'
 NET_SNMP_URL      := https://raw.githubusercontent.com/net-snmp/net-snmp/v5.9/mibs
-PALOALTO_URL      := https://docs.paloaltonetworks.com/content/dam/techdocs/en_US/zip/snmp-mib/pan-10-0-snmp-mib-modules.zip
-PRINTER_URL       := https://ftp.pwg.org/pub/pwg/pmp/mibs/rfc3805b.mib
-SERVERTECH_URL    := 'https://cdn10.servertech.com/assets/documents/documents/817/original/Sentry3.mib'
-SERVERTECH4_URL   := 'https://cdn10.servertech.com/assets/documents/documents/815/original/Sentry4.mib'
-SYNOLOGY_URL      := 'https://global.download.synology.com/download/Document/Software/DeveloperGuide/Firmware/DSM/All/enu/Synology_MIB_File.zip'
-UBNT_AIROS_URL    := https://dl.ubnt.com/firmwares/airos-ubnt-mib/ubnt-mib.zip
-UBNT_AIRFIBER_URL := https://dl.ubnt.com/firmwares/airfiber5X/v4.1.0/UBNT-MIB.txt
-UBNT_DL_URL       := https://dl.ubnt-ut.com/snmp
-WIENER_URL        := https://file.wiener-d.com/software/net-snmp/WIENER-CRATE-MIB-5704.zip
-RARITAN_URL       := https://cdn.raritan.com/download/PX/v1.5.20/PDU-MIB.txt
-INFRAPOWER_URL    := https://www.austin-hughes.com/support/software/infrapower/IPD-MIB.7z
-EATON_URL         := https://powerquality.eaton.com/Support/Software-Drivers/Downloads/ePDU/EATON-EPDU-MIB.zip
-EATON_OIDS_URL    := https://raw.githubusercontent.com/librenms/librenms/master/mibs/eaton/EATON-OIDS
-FREENAS_URL       := https://raw.githubusercontent.com/truenas/middleware/master/src/freenas/usr/local/share/snmp/mibs/TRUENAS-MIB.txt
 
 .DEFAULT: all
 
@@ -60,17 +42,11 @@ clean:
 	rm -rvf \
 		$(MIBDIR)/* \
 		$(MIBDIR)/cisco_v2 \
-		$(MIBDIR)/.net-snmp \
-		$(MIBDIR)/.paloalto_panos \
-		$(MIBDIR)/.synology \
-		$(MIBDIR)/.kemp-lm
+		$(MIBDIR)/.net-snmp
 
 .PHONY: mibs
 mibs: mib-dir \
   $(MIBDIR)/apc-powernet-mib \
-  $(MIBDIR)/ARISTA-ENTITY-SENSOR-MIB \
-  $(MIBDIR)/ARISTA-SMI-MIB \
-  $(MIBDIR)/ARISTA-SW-IP-FORWARDING-MIB \
   $(MIBDIR)/cisco_v2 \
   $(MIBDIR)/IANA-CHARSET-MIB.txt \
   $(MIBDIR)/IANA-IFTYPE-MIB.txt \
@@ -78,22 +54,8 @@ mibs: mib-dir \
   $(MIBDIR)/KEEPALIVED-MIB \
   $(MIBDIR)/VRRP-MIB \
   $(MIBDIR)/VRRPv3-MIB \
-  $(MIBDIR)/.kemp-lm \
   $(MIBDIR)/MIKROTIK-MIB \
-  $(MIBDIR)/.net-snmp \
-  $(MIBDIR)/.paloalto_panos \
-  $(MIBDIR)/PRINTER-MIB-V2.txt \
-  $(MIBDIR)/servertech-sentry3-mib \
-  $(MIBDIR)/servertech-sentry4-mib \
-  $(MIBDIR)/.synology \
-  $(MIBDIR)/UBNT-UniFi-MIB \
-  $(MIBDIR)/UBNT-AirFiber-MIB \
-  $(MIBDIR)/UBNT-AirMAX-MIB.txt \
-  $(MIBDIR)/WIENER-CRATE-MIB-5704.txt \
-  $(MIBDIR)/PDU-MIB.txt \
-  $(MIBDIR)/IPD-MIB_Q419V9.mib \
-  $(MIBDIR)/EATON-OIDS.txt \
-  $(MIBDIR)/FREENAS-MIB.txt
+  $(MIBDIR)/.net-snmp
 
 mib-dir:
 	@mkdir -p -v $(MIBDIR)
@@ -101,18 +63,9 @@ mib-dir:
 $(MIBDIR)/apc-powernet-mib:
 	@echo ">> Downloading apc-powernet-mib"
 	@curl $(CURL_OPTS) -o $(MIBDIR)/apc-powernet-mib "$(APC_URL)"
-
-$(MIBDIR)/ARISTA-ENTITY-SENSOR-MIB:
-	@echo ">> Downloading ARISTA-ENTITY-SENSOR-MIB"
-	@curl $(CURL_OPTS) -o $(MIBDIR)/ARISTA-ENTITY-SENSOR-MIB "$(ARISTA_URL)/ARISTA-ENTITY-SENSOR-MIB.txt"
-
-$(MIBDIR)/ARISTA-SMI-MIB:
-	@echo ">> Downloading ARISTA-SMI-MIB"
-	@curl $(CURL_OPTS) -o $(MIBDIR)/ARISTA-SMI-MIB "$(ARISTA_URL)/ARISTA-SMI-MIB.txt"
-
-$(MIBDIR)/ARISTA-SW-IP-FORWARDING-MIB:
-	@echo ">> Downloading ARISTA-SW-IP-FORWARDING-MIB"
-	@curl $(CURL_OPTS) -o $(MIBDIR)/ARISTA-SW-IP-FORWARDING-MIB "$(ARISTA_URL)/ARISTA-SW-IP-FORWARDING-MIB.txt"
+	# Workaround to make DisplayString available (#867)
+	@sed -i.bak -E 's/(DisplayString[[:space:]]*FROM )RFC1213-MIB/\1SNMPv2-TC/' $(MIBDIR)/apc-powernet-mib
+	@rm $(MIBDIR)/apc-powernet-mib.bak
 
 $(MIBDIR)/cisco_v2:
 	$(eval TMP := $(shell mktemp))
@@ -148,20 +101,9 @@ $(MIBDIR)/VRRPv3-MIB:
 	@echo ">> Downloading VRRPv3-MIB"
 	@curl $(CURL_OPTS) -o $(MIBDIR)/VRRPv3-MIB $(VRRPV3_URL)
 
-$(MIBDIR)/.kemp-lm:
-	$(eval TMP := $(shell mktemp))
-	@echo ">> Downloading Kemp LM MIBs to $(TMP)"
-	@curl $(CURL_OPTS) -L -o $(TMP) $(KEMP_LM_URL)
-	@unzip -j -d $(MIBDIR) $(TMP) *.txt
-	# Workaround invalid timestamps.
-	@sed -i.bak -E 's/"([0-9]{12})[0-9]{2}Z"/"\1Z"/' $(MIBDIR)/*.RELEASE-B100-MIB.txt
-	@rm $(MIBDIR)/*.RELEASE-B100-MIB.txt.bak
-	@rm -v $(TMP)
-	@touch $(MIBDIR)/.kemp-lm
-
 $(MIBDIR)/MIKROTIK-MIB:
 	@echo ">> Downloading MIKROTIK-MIB"
-	@curl $(CURL_OPTS) -L -o $(MIBDIR)/MIKROTIK-MIB $(MIKROTIK_URL)
+	@curl $(CURL_OPTS) -o $(MIBDIR)/MIKROTIK-MIB $(MIKROTIK_URL)
 
 $(MIBDIR)/.net-snmp:
 	@echo ">> Downloading NET-SNMP mibs"
@@ -179,72 +121,3 @@ $(MIBDIR)/.net-snmp:
 	@curl $(CURL_OPTS) -o $(MIBDIR)/UCD-SNMP-MIB $(NET_SNMP_URL)/UCD-SNMP-MIB.txt
 	@curl $(CURL_OPTS) -o $(MIBDIR)/UCD-DISKIO-MIB $(NET_SNMP_URL)/UCD-DISKIO-MIB.txt
 	@touch $(MIBDIR)/.net-snmp
-
-$(MIBDIR)/.paloalto_panos:
-	$(eval TMP := $(shell mktemp))
-	@echo ">> Downloading paloalto_pano to $(TMP)"
-	@curl $(CURL_OPTS) -o $(TMP) $(PALOALTO_URL)
-	@unzip -j -d $(MIBDIR) $(TMP)
-	@rm -v $(TMP)
-	@touch $(MIBDIR)/.paloalto_panos
-
-$(MIBDIR)/PRINTER-MIB-V2.txt:
-	@echo ">> Downloading Printer MIB v2"
-	@curl $(CURL_OPTS) -o $(MIBDIR)/PRINTER-MIB-V2.txt $(PRINTER_URL)
-
-$(MIBDIR)/servertech-sentry3-mib:
-	@echo ">> Downloading servertech-sentry3-mib"
-	@curl $(CURL_OPTS) -o $(MIBDIR)/servertech-sentry3-mib $(SERVERTECH_URL)
-
-$(MIBDIR)/servertech-sentry4-mib:
-	@echo ">> Downloading servertech-sentry4-mib"
-	@curl $(CURL_OPTS) -o $(MIBDIR)/servertech-sentry4-mib $(SERVERTECH4_URL)
-
-$(MIBDIR)/.synology:
-	$(eval TMP := $(shell mktemp))
-	@echo ">> Downloading synology to $(TMP)"
-	@curl $(CURL_OPTS) -o $(TMP) $(SYNOLOGY_URL)
-	@unzip -j -d $(MIBDIR) $(TMP)
-	@rm -v $(TMP)
-	@touch $(MIBDIR)/.synology
-
-$(MIBDIR)/UBNT-UniFi-MIB:
-	@echo ">> Downloading UBNT-UniFi-MIB"
-	@curl $(CURL_OPTS) -o $(MIBDIR)/UBNT-UniFi-MIB "$(UBNT_DL_URL)/UBNT-UniFi-MIB"
-
-$(MIBDIR)/UBNT-AirFiber-MIB:
-	@echo ">> Downloading UBNT-AirFiber-MIB"
-	@curl $(CURL_OPTS) -o $(MIBDIR)/UBNT-AirFiber-MIB $(UBNT_AIRFIBER_URL)
-
-$(MIBDIR)/UBNT-AirMAX-MIB.txt:
-	$(eval TMP := $(shell mktemp))
-	@echo ">> Downloading ubnt-airos to $(TMP)"
-	@curl $(CURL_OPTS) -o $(TMP) $(UBNT_AIROS_URL)
-	@unzip -j -d $(MIBDIR) $(TMP) UBNT-AirMAX-MIB.txt
-	@rm -v $(TMP)
-
-$(MIBDIR)/WIENER-CRATE-MIB-5704.txt:
-	$(eval TMP := $(shell mktemp))
-	@echo ">> Downloading WIENER-CRATE-MIB to $(TMP)"
-	@curl $(CURL_OPTS) -o $(TMP) $(WIENER_URL)
-	@unzip -j -d $(MIBDIR) $(TMP)
-	@rm -v $(TMP)
-
-$(MIBDIR)/PDU-MIB.txt:
-	@echo ">> Downloading PDU-MIB"
-	@curl $(CURL_OPTS) -o $(MIBDIR)/PDU-MIB.txt "$(RARITAN_URL)"
-
-$(MIBDIR)/IPD-MIB_Q419V9.mib:
-	$(eval TMP := $(shell mktemp))
-	@echo ">> Downloading IPD-MIB_Q419V9 to $(TMP)"
-	@curl $(CURL_OPTS) -L -o $(TMP) $(INFRAPOWER_URL)
-	@7z e -o$(MIBDIR) $(TMP)
-	@rm -v $(TMP)
-
-$(MIBDIR)/EATON-OIDS.txt:
-	@echo ">> Downloading EATON-OIDS.txt to $@"
-	@curl $(CURL_OPTS) -o $@ $(EATON_OIDS_URL)
-
-$(MIBDIR)/FREENAS-MIB.txt:
-	@echo ">> Downloading FREENAS-MIB"
-	@curl $(CURL_OPTS) -o $(MIBDIR)/FREENAS-MIB.txt "$(FREENAS_URL)"
