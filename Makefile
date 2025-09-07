@@ -22,7 +22,7 @@ DOCKER_IMAGE_NAME ?= snmp-generator
 DOCKER_IMAGE_TAG  ?= $(subst /,-,$(shell git rev-parse --abbrev-ref HEAD))
 DOCKER_REPO       ?= prom
 
-APC_URL           := https://download.schneider-electric.com/files?p_enDocType=Firmware&p_File_Name=powernet451.mib&p_Doc_Ref=APC_POWERNETMIB_451_EN
+APC_URL           := https://raw.githubusercontent.com/prometheus-community/snmp/refs/heads/main/apc/PowerNet-MIB
 CISCO_URL         := https://github.com/cisco/cisco-mibs/archive/refs/heads/main.tar.gz
 IANA_CHARSET_URL  := https://www.iana.org/assignments/ianacharset-mib/ianacharset-mib
 IANA_IFTYPE_URL   := https://www.iana.org/assignments/ianaiftype-mib/ianaiftype-mib
