@@ -1,7 +1,7 @@
 # For main
-ARG FROM=alpine:latest
+ARG FROM=alpine:3.22.4
 
-FROM golang:alpine as builder
+FROM golang:1.26.3-alpine3.22 as builder
 ARG SNMP_EXPORTER_VERSION=latest
 
 RUN apk add net-snmp-dev p7zip unzip build-base && \
